@@ -1,5 +1,4 @@
-//IDIRICOACHING/backendendidiricoaching/server.js
-
+// Importation des modules
 const express = require('express');
 const mongoose = require('mongoose');
 const helmet = require('helmet');
@@ -10,42 +9,43 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 
 // Vérification des variables d'environnement critiques
-if (!process.env.MONGO_URI) {
-  console.error('⚠️  La variable d\'environnement MONGO_URI est manquante.');
-  process.exit(1);
-}
+const requiredEnvVars = ['MONGO_URI', 'JWT_SECRET', 'SMTP_USER', 'SMTP_PASS'];
+requiredEnvVars.forEach((varName) => {
+  if (!process.env[varName]) {
+    console.error(`⚠️  La variable d'environnement ${varName} est manquante.`);
+    process.exit(1);
+  }
+});
 
 // Connexion à MongoDB
-
-
-mongoose.connect(process.env.MONGO_URI, {
-
-  serverSelectionTimeoutMS: 30000, // Temps d'attente pour se connecter
-})
+mongoose
+  .connect(process.env.MONGO_URI, {
+    serverSelectionTimeoutMS: 30000, // Temps d'attente pour se connecter
+  })
   .then(() => console.log('✅ Connecté à MongoDB'))
-  .catch(err => {
+  .catch((err) => {
     console.error('❌ Erreur MongoDB :', err.message);
     process.exit(1); // Quitter si la connexion échoue
   });
 
-
-
 // Middleware globaux
 app.use(express.json());
 app.use(helmet());
-app.use(cors({
-  origin: 'http://localhost:3000', // URL du frontend
-  credentials: true, // Permet l'envoi des cookies (si nécessaire)
-}));
+app.use(
+  cors({
+    origin: ['http://localhost:3000', 'https://idiricoaching.fr','https:www.idiricoaching.fr'], // Autorisation du domaine et du localhost
+    credentials: true, // Permet l'envoi des cookies (si nécessaire)
+  })
+);
 
 // Importation des routes
 const userRoutes = require('./routes/userRoutes');
-
 const coachRoutes = require('./routes/coachRoutes');
 const slotRoutes = require('./routes/slotRoutes');
 const reservationRoutes = require('./routes/reservationRoutes');
 const emailRoutes = require('./routes/emailRoutes');
-const registerRoutes=require('./routes/register')
+const registerRoutes = require('./routes/register');
+
 // Utilisation des routes
 app.use('/api/users', userRoutes);
 app.use('/api/coaches', coachRoutes);
@@ -54,23 +54,13 @@ app.use('/api/reservations', reservationRoutes);
 app.use('/api/emails', emailRoutes);
 app.use('/api/register', registerRoutes);
 
-/*// Debug : Afficher toutes les routes enregistrées
-console.log("Liste des routes enregistrées :");
+// Debug : Afficher toutes les routes enregistrées
+console.log('Liste des routes activées :');
 app._router.stack.forEach((middleware) => {
-  if (middleware.route) { // Si c'est une route
+  if (middleware.route) {
     console.log(`${Object.keys(middleware.route.methods).join(', ').toUpperCase()} ${middleware.route.path}`);
-  } else if (middleware.name === 'router') { // Si c'est un routeur (nested routes)
-    middleware.handle.stack.forEach((handler) => {
-      if (handler.route) {
-        console.log(`${Object.keys(handler.route.methods).join(', ').toUpperCase()} ${handler.route.path}`);
-      }
-    });
   }
-});*/
-
-
-
-
+});
 
 // Gestion des erreurs 404 pour les routes non trouvées
 app.use((req, res, next) => {
@@ -85,15 +75,7 @@ app.use((err, req, res, next) => {
   });
 });
 
-app._router.stack.forEach((middleware) => {
-  if (middleware.route) {
-    console.log(`${Object.keys(middleware.route.methods).join(', ').toUpperCase()} ${middleware.route.path}`);
-  }
-});
-
 // Démarrage du serveur
 app.listen(PORT, () => {
   console.log(`🚀 Serveur démarré sur le port ${PORT}`);
 });
-
-
