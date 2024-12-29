@@ -116,14 +116,16 @@ router.post('/forgot-password', async (req, res) => {
     });
 
     // Options de l'email
+    const resetLink = `${process.env.FRONTEND_URL}/reset-password/${resetToken}`;
+
     const mailOptions = {
       from: process.env.SMTP_USER,
       to: user.email,
       subject: 'Réinitialisation de votre mot de passe',
       text: `Cliquez sur le lien suivant pour réinitialiser votre mot de passe : 
-      http://localhost:3000/reset-password/${resetToken}`,
+      ${resetLink}`,
     };
-
+    
     await transporter.sendMail(mailOptions);
 
     res.status(200).json({ message: 'Un email de réinitialisation a été envoyé.' });

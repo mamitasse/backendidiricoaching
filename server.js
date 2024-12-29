@@ -33,7 +33,7 @@ app.use(express.json());
 app.use(helmet());
 app.use(
   cors({
-    origin: ['http://localhost:3000', 'https://idiricoaching.fr','https:www.idiricoaching.fr'], // Autorisation du domaine et du localhost
+    origin: ['http://localhost:3000', 'https://idiricoaching.fr','https://www.idiricoaching.fr'], // Autorisation du domaine et du localhost
     credentials: true, // Permet l'envoi des cookies (si nécessaire)
   })
 );
