@@ -1,14 +1,12 @@
-//IDIRICOACHING/backendendidiricoaching/routes/register.js
-
 const express = require('express');
 const bcrypt = require('bcryptjs');
 const User = require('../models/user');
+const axios = require('axios'); // Ajout pour faire une requête à la route d'email
 
 const router = express.Router();
 
 router.post('/register', async (req, res) => {
   const { firstName, lastName, email, password, role, gender, age, coachId } = req.body;
-
 
   try {
     // Vérification de l'existence de l'utilisateur
@@ -38,7 +36,15 @@ router.post('/register', async (req, res) => {
     });
 
     await newUser.save();
-    res.status(201).json({ message: 'User registered successfully!' });
+
+    // Appeler la route /send-email pour envoyer l'email de confirmation
+    await axios.post('http://localhost:5000/api/send-email', {
+      type: 'confirmation',
+      name: `${firstName} ${lastName}`,
+      email: email,
+    });
+
+    res.status(201).json({ message: 'User registered successfully! Email sent.' });
   } catch (error) {
     console.error(error); // Pour le débogage
     res.status(500).json({ error: 'Error registering user' });
