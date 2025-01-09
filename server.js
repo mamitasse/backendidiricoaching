@@ -1,9 +1,10 @@
 // Importation des modules
+require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
 const helmet = require('helmet');
 const cors = require('cors');
-require('dotenv').config();
+
 
 const app = express();
 const PORT = process.env.PORT || 5000;
