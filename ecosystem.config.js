@@ -1,7 +1,7 @@
 module.exports = {
   apps: [
     {
-      name: "backend",
+      name: "backendidiricoaching",
       script: "server.js",
       instances: 1,
       autorestart: true,
