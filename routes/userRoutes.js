@@ -14,6 +14,8 @@ const crypto = require('crypto');
 
 const router = express.Router();
 
+
+
 /**
  * Route pour l'inscription des adhérents.
  */

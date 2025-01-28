@@ -46,6 +46,9 @@ const slotRoutes = require('./routes/slotRoutes');
 const reservationRoutes = require('./routes/reservationRoutes');
 const emailRoutes = require('./routes/emailRoutes');
 const registerRoutes = require('./routes/register');
+const secureRoutes = require('./routes/secureRoutes');
+app.use('/api/secure', secureRoutes);
+
 
 // Utilisation des routes
 app.use('/api/users', userRoutes);
